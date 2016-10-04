@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package myapp;
+package com.google.cloud.samples.test;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+/**
+ * A hello world app to test the parent pom.xml.
+ */
+public class App {
+  public String greeting() {
+    return "Hello World!";
+  }
 
-public class DemoServlet extends HttpServlet {
-    @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws IOException {
-        resp.setContentType("text/plain");
-        resp.getWriter().println("{ \"name\": \"XinHong\" }");
-    }
+  public static void main(String[] args) {
+    App app = new App();
+    System.out.println(app.greeting());
+  }
 }
