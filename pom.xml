@@ -372,14 +372,14 @@
                 <version>2.3</version>
                 <configuration>
                     <archiveClasses>true</archiveClasses>
-                    <webResources>
-                        <!-- in order to interpolate version from pom into appengine-web.xml -->
-                        <resource>
-                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
-                            <filtering>true</filtering>
-                            <targetPath>WEB-INF</targetPath>
-                        </resource>
-                    </webResources>
+                    <!--<webResources>-->
+                        <!--&lt;!&ndash; in order to interpolate version from pom into appengine-web.xml &ndash;&gt;-->
+                        <!--<resource>-->
+                            <!--<directory>${basedir}/src/main/webapp/WEB-INF</directory>-->
+                            <!--<filtering>true</filtering>-->
+                            <!--<targetPath>WEB-INF</targetPath>-->
+                        <!--</resource>-->
+                    <!--</webResources>-->
                 </configuration>
             </plugin>
 
