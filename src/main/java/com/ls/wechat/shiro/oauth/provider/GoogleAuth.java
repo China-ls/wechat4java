@@ -20,9 +20,10 @@
 
 package com.ls.wechat.shiro.oauth.provider;
 
-import com.google.appengine.api.urlfetch.*;
 import com.ls.wechat.shiro.gae.UserAuthType;
 import com.ls.wechat.shiro.oauth.OAuthInfo;
+import com.google.appengine.api.urlfetch.*;
+import com.google.common.base.Charsets;
 import org.apache.shiro.web.util.WebUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,18 +71,18 @@ public class GoogleAuth extends AuthBase implements IOAuthProviderInfo {
     @Override
     public String loginURL(String callbackUri) {
         OAuthService service = new ServiceBuilder()
-                .provider(GoogleApi20.class)
-                .apiKey(apiKey)
-                .apiSecret(apiSecret)
-                .callback(makeAbsolute(callbackUri))
-                .scope("https://www.googleapis.com/auth/userinfo.email")
-                .build();
+                                      .provider(GoogleApi20.class)
+                                      .apiKey(apiKey)
+                                      .apiSecret(apiSecret)
+                                      .callback(makeAbsolute(callbackUri))
+                                      .scope("https://www.googleapis.com/auth/userinfo.email")
+                                      .build();
         return service.getAuthorizationUrl(EMPTY_TOKEN);
     }
 
     @Override
     public String reAuthenticateURL(String callbackUri) {
-        return loginURL(callbackUri) + "&approval_prompt=force";
+        return loginURL(callbackUri)+"&approval_prompt=force";
     }
 
     @Override
@@ -107,12 +108,12 @@ public class GoogleAuth extends AuthBase implements IOAuthProviderInfo {
 
     private JSONObject getUserInfoJSON(String code, String callBackUrl) {
         OAuthService service = new ServiceBuilder()
-                .provider(GoogleApi20.class)
-                .apiKey(apiKey)
-                .apiSecret(apiSecret)
-                .callback(makeAbsolute(callBackUrl))
-                .scope("email")
-                .build();
+                                      .provider(GoogleApi20.class)
+                                      .apiKey(apiKey)
+                                      .apiSecret(apiSecret)
+                                      .callback(makeAbsolute(callBackUrl))
+                                      .scope("email")
+                                      .build();
         Verifier verifier = new Verifier(code);
         //Token accessToken = service.getAccessToken(EMPTY_TOKEN, verifier);
         Token accessToken = getAccessToken(verifier, makeAbsolute(callBackUrl));
@@ -120,7 +121,7 @@ public class GoogleAuth extends AuthBase implements IOAuthProviderInfo {
         service.signRequest(accessToken, request);
         Response response = request.send();
         try {
-            JSONObject obj = new JSONObject(response.getBody());
+            JSONObject obj =  new JSONObject(response.getBody());
             obj.put("access_token", accessToken.getToken());
             return obj;
         } catch (JSONException e) {
@@ -135,7 +136,7 @@ public class GoogleAuth extends AuthBase implements IOAuthProviderInfo {
 
     @Override
     public void revokeToken(String token, HttpServletRequest request, HttpServletResponse response,
-                            String redirectURL) throws IOException {
+                            String redirectURL)  throws IOException {
         String redirectHome = response.encodeRedirectURL(redirectURL);
         String url = GoogleAuth.logoutUrl(token);
         String reply = fetch(new URL(url));
@@ -148,10 +149,9 @@ public class GoogleAuth extends AuthBase implements IOAuthProviderInfo {
 
     /**
      * This is hacked, as at the moment, the Scribe API hasn't moved up to Google's OAuth 2.0 implementation.
-     *
-     * @param verifier    verifier
+     * @param verifier verifier
      * @param callbackUrl callback
-     * @return callback URL
+     * @return  callback URL
      */
     public Token getAccessToken(Verifier verifier, String callbackUrl) {
         OAuthRequest request = new OAuthRequest(Verb.POST, "https://accounts.google.com/o/oauth2/token");
@@ -173,7 +173,7 @@ public class GoogleAuth extends AuthBase implements IOAuthProviderInfo {
             if (response.getResponseCode() == 200) {
                 return null;
             } else {
-                String s = new String(response.getContent(), "UTF-8");
+                String s = new String(response.getContent(), Charsets.UTF_8);
                 return (s == null) ? "Unknown error with code " + response.getResponseCode() : s;
             }
         } catch (IOException e) {

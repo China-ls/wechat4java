@@ -35,8 +35,7 @@ class JsonTokenExtractor implements AccessTokenExtractor {
 
     private static final Pattern accessTokenPattern = Pattern.compile("\"access_token\"\\s*:\\s*\"(\\S*?)\"");
 
-    JsonTokenExtractor() {
-    }
+    JsonTokenExtractor() {}
 
     @Override
     public Token extract(String response) {

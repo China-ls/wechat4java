@@ -21,6 +21,7 @@
 package com.ls.wechat.shiro.oauth;
 
 import com.ls.wechat.shiro.gae.UserAuthType;
+import com.google.common.base.Preconditions;
 
 import java.util.logging.Logger;
 
@@ -69,28 +70,16 @@ public class OAuthInfo {
         public Builder(UserAuthType authType) {
             this.authType = authType;
         }
-
-        public Builder token(String token) {
-            this.token = token;
-            return this;
-        }
-
-        public Builder email(String email) {
-            this.email = email;
-            return this;
-        }
-
-        public Builder errorString(String errorString) {
-            this.errorString = errorString;
-            return this;
-        }
+        public Builder token(String token) { this.token = token; return this; }
+        public Builder email(String email) { this.email = email; return this; }
+        public Builder errorString(String errorString) { this.errorString = errorString; return this; }
 
         public OAuthInfo build() {
-//            if (errorString == null) {
-//                Preconditions.checkNotNull(token, "You cannot have an empty token when there are no errors");
-//                Preconditions.checkNotNull(email, "You cannot have an empty email address when there are no errors");
-//                Preconditions.checkNotNull(authType, "You cannot have a null auth type");
-//            }
+            if (errorString == null) {
+                Preconditions.checkNotNull(token, "You cannot have an empty token when there are no errors");
+                Preconditions.checkNotNull(email, "You cannot have an empty email address when there are no errors");
+                Preconditions.checkNotNull(authType, "You cannot have a null auth type");
+            }
             return new OAuthInfo(token, email, errorString, authType);
         }
     }

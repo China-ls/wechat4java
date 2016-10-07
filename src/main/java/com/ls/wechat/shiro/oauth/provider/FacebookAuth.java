@@ -68,18 +68,18 @@ public class FacebookAuth extends AuthBase implements IOAuthProviderInfo {
     @Override
     public String loginURL(String callbackUri) {
         OAuthService service = new ServiceBuilder()
-                .provider(FacebookApi.class)
-                .apiKey(apiKey)
-                .apiSecret(apiSecret)
-                .callback(makeAbsolute(callbackUri, host))
-                .scope("email")
-                .build();
+                                      .provider(FacebookApi.class)
+                                      .apiKey(apiKey)
+                                      .apiSecret(apiSecret)
+                                      .callback(makeAbsolute(callbackUri, host))
+                                      .scope("email")
+                                      .build();
         return service.getAuthorizationUrl(EMPTY_TOKEN);
     }
 
     @Override
     public String reAuthenticateURL(String callbackUri) {
-        return loginURL(callbackUri) + "&auth_type=reauthenticate";
+        return loginURL(callbackUri)+"&auth_type=reauthenticate";
     }
 
     @Override
@@ -94,19 +94,19 @@ public class FacebookAuth extends AuthBase implements IOAuthProviderInfo {
 
     private JSONObject getUserInfoJSON(String code, String callBackUrl) {
         OAuthService service = new ServiceBuilder()
-                .provider(FacebookApi.class)
-                .apiKey(apiKey)
-                .apiSecret(apiSecret)
-                .callback(makeAbsolute(callBackUrl, host))
-                .scope("email")
-                .build();
+                                      .provider(FacebookApi.class)
+                                      .apiKey(apiKey)
+                                      .apiSecret(apiSecret)
+                                      .callback(makeAbsolute(callBackUrl, host))
+                                      .scope("email")
+                                      .build();
         Verifier verifier = new Verifier(code);
         Token accessToken = service.getAccessToken(EMPTY_TOKEN, verifier);
         OAuthRequest request = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE_URL);
         service.signRequest(accessToken, request);
         Response response = request.send();
         try {
-            JSONObject obj = new JSONObject(response.getBody());
+            JSONObject obj =  new JSONObject(response.getBody());
             obj.put("access_token", accessToken.getToken());
             return obj;
         } catch (JSONException e) {
@@ -115,7 +115,7 @@ public class FacebookAuth extends AuthBase implements IOAuthProviderInfo {
     }
 
     public void revokeToken(String token, HttpServletRequest request, HttpServletResponse response,
-                            String redirectURL) throws IOException {
+                            String redirectURL)  throws IOException {
         String redirectHome = ProviderUtil.makeRoot(request.getRequestURL().toString(), redirectURL);
 
         String url = logoutUrl(redirectHome, token);
@@ -124,7 +124,7 @@ public class FacebookAuth extends AuthBase implements IOAuthProviderInfo {
 
     public static String logoutUrl(String redirect, String accessToken) throws IOException {
         String redirectOK = OAuthEncoder.encode(redirect);
-        return "https://www.facebook.com/logout.php?next=" + redirectOK + "&access_token=" + accessToken;
+        return "https://www.facebook.com/logout.php?next="+redirectOK+"&access_token=" + accessToken;
     }
 
 }

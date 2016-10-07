@@ -21,6 +21,7 @@
 package com.ls.wechat.shiro.oauth;
 
 import com.ls.wechat.shiro.gae.UserAuthType;
+import com.google.common.base.Preconditions;
 import org.apache.shiro.authc.HostAuthenticationToken;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
@@ -36,9 +37,9 @@ public class OAuthAuthenticationToken implements HostAuthenticationToken, Rememb
     private final String host;
 
     public OAuthAuthenticationToken(String token, UserAuthType authType, String principal, String host) {
-//        Preconditions.checkNotNull(token, "You have to have an OAuth token to create an authentication token");
-//        Preconditions.checkNotNull(authType, "You have to specify an OAuth type to create an authentication token");
-//        Preconditions.checkNotNull(principal, "You have to have a principal (email address) to create an authentication token");
+        Preconditions.checkNotNull(token, "You have to have an OAuth token to create an authentication token");
+        Preconditions.checkNotNull(authType, "You have to specify an OAuth type to create an authentication token");
+        Preconditions.checkNotNull(principal, "You have to have a principal (email address) to create an authentication token");
 
         this.token = token;
         this.authType = authType;

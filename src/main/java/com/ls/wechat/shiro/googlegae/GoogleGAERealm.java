@@ -40,8 +40,8 @@ public class GoogleGAERealm extends AuthenticatingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         if (token != null && token instanceof GoogleGAEAuthenticationToken) {
-            GoogleGAEAuthenticationToken authToken = (GoogleGAEAuthenticationToken) token;
-            return new GoogleGAEAuthenticationInfo((String) authToken.getPrincipal());
+            GoogleGAEAuthenticationToken authToken = (GoogleGAEAuthenticationToken)token;
+            return new GoogleGAEAuthenticationInfo((String)authToken.getPrincipal());
         } else {
             return null;
         }

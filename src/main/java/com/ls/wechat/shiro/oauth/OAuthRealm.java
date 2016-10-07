@@ -34,14 +34,14 @@ public class OAuthRealm extends AuthenticatingRealm {
 
     public OAuthRealm() {
         super(new MemcacheManager(), new OAuthCredentialsMatcher());
-        setAuthenticationTokenClass(OAuthAuthenticationToken.class);
+        setAuthenticationTokenClass(OAuthAuthenticationToken.class);        
     }
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         if (token != null && token instanceof OAuthAuthenticationToken) {
-            OAuthAuthenticationToken authToken = (OAuthAuthenticationToken) token;
-            return new OAuthAuthenticationInfo((String) authToken.getCredentials(), (String) authToken.getPrincipal(), authToken.getAuthType());
+            OAuthAuthenticationToken authToken = (OAuthAuthenticationToken)token;
+            return new OAuthAuthenticationInfo((String)authToken.getCredentials(), (String)authToken.getPrincipal(), authToken.getAuthType());
         } else {
             return null;
         }

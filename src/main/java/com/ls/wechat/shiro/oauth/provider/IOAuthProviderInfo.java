@@ -30,23 +30,19 @@ import java.io.IOException;
 public interface IOAuthProviderInfo {
     /**
      * Which type of authorization is being used?  Each one is handled somewhat differently.
-     *
-     * @return The enum type
+     * @return  The enum type
      */
     public UserAuthType getUserAuthType();
 
     /**
      * The URL to call on login, to get a code.
-     *
-     * @param callbackUri Where to go afterwards.
+     * @param callbackUri  Where to go afterwards.
      * @return
      */
     public String loginURL(String callbackUri);
-
     /**
      * The URL to call on re-authentication, to get a code.
-     *
-     * @param callbackUri Where to go afterwards.
+     * @param callbackUri  Where to go afterwards.
      * @return
      */
     public String reAuthenticateURL(String callbackUri);
@@ -54,8 +50,7 @@ public interface IOAuthProviderInfo {
     /**
      * Information about the user.  At the moment its pretty-much just the
      * email address.
-     *
-     * @param code        The auth token
+     * @param code The auth token
      * @param callBackUrl Where to go afterwards
      * @return The info.
      */
@@ -63,10 +58,9 @@ public interface IOAuthProviderInfo {
 
     /**
      * Revoked a token whilst in a web session
-     *
-     * @param token       The token to revoke
-     * @param request     Current request
-     * @param response    Current response
+     * @param token The token to revoke
+     * @param request  Current request
+     * @param response Current response
      * @param redirectURL Where you'd like to be redirected to
      */
     public void revokeToken(String token, HttpServletRequest request, HttpServletResponse response, String redirectURL) throws IOException;

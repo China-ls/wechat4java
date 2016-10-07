@@ -20,6 +20,7 @@
 
 package com.ls.wechat.shiro.oauth;
 
+import com.google.common.base.Preconditions;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
@@ -30,13 +31,12 @@ import java.util.logging.Logger;
 public class OAuthCredentialsMatcher implements CredentialsMatcher {
     static final Logger LOG = Logger.getLogger(OAuthCredentialsMatcher.class.getName());
 
-    public OAuthCredentialsMatcher() {
-    }
+    public OAuthCredentialsMatcher() {}
 
     @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
-//        Preconditions.checkNotNull(info);
-//        Preconditions.checkNotNull(token);
+        Preconditions.checkNotNull(info);
+        Preconditions.checkNotNull(token);
 
         Object primary = info.getPrincipals().getPrimaryPrincipal();
         return token instanceof OAuthAuthenticationToken && token.getCredentials() != null && token.getPrincipal().equals(primary);

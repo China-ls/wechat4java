@@ -19,7 +19,7 @@
 
 package com.ls.wechat.shiro.gae;
 
-import com.ls.wechat.entity.Account;
+import com.google.common.base.Preconditions;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -27,18 +27,23 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.shiro.util.SimpleByteSource;
+
+import java.util.logging.Logger;
 
 
 public class DatastoreRealm extends AuthorizingRealm {
-    private static final Logger log = LoggerFactory.getLogger(DatastoreRealm.class.getName());
+    private static final Logger LOG = Logger.getLogger(DatastoreRealm.class.getName());
 
 
     public DatastoreRealm() {
         super(new MemcacheManager(), theCredentials());
 
-        log.debug("Creating a new instance of DatastoreRealm");
+        LOG.fine("Creating a new instance of DatastoreRealm");
+    }
+
+    private GaeUserDAO dao() {
+        return new GaeUserDAO();
     }
 
     @Override
@@ -48,58 +53,51 @@ public class DatastoreRealm extends AuthorizingRealm {
     }
 
     private AuthenticationInfo doGetAuthenticationInfo(String userName) throws AuthenticationException {
-//        Preconditions.checkNotNull(userName, "User name can't be null");
+        Preconditions.checkNotNull(userName, "User name can't be null");
 
-        log.debug("Finding authorization info for {} in DB", userName);
-        Account user = new Account();
-        user.setUsername(userName);
+        LOG.info("Finding authentication info for " + userName + " in DB");
+        GaeUser user = dao().findUser(userName);
+
 
         if (user == null || userIsNotQualified(user)) {
-            log.info("Rejecting " + user.getName());
+            LOG.info("Rejecting " + user.getName());
             return null;
         }
-        log.info("Found {} in DB", userName);
+        LOG.info("Found " + userName + " in DB");
 
-        SimpleAccount account = new SimpleAccount(userName, userName.getBytes(), this.getName());
-
-//        SimpleAccount account = new SimpleAccount(user.getName(),
-//                user.getPasswordHash(), new SimpleByteSource(user.getSalt()), getName());
-//        account.setRoles(user.getRoles());
-//        account.setStringPermissions(user.getPermissions());
+        SimpleAccount account = new SimpleAccount(user.getName(),
+                user.getPasswordHash(), new SimpleByteSource(user.getSalt()), getName());
+        account.setRoles(user.getRoles());
+        account.setStringPermissions(user.getPermissions());
         return account;
     }
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-//        Preconditions.checkNotNull(principals, "You can't have a null collection of principals");
-
+        Preconditions.checkNotNull(principals, "You can't have a null collection of principals");
         String userName = (String) getAvailablePrincipal(principals);
         if (userName == null) {
             throw new NullPointerException("Can't find a principal in the collection");
         }
-        log.debug("Finding authorization info for {} in DB", userName);
-//        Account user = dao().findUser(userName);
-        Account user = new Account();
-        user.setUsername(userName);
+        LOG.fine("Finding authorization info for " + userName + " in DB");
+        GaeUser user = dao().findUser(userName);
         if (user == null || userIsNotQualified(user)) {
             return null;
         }
-        log.debug("Found {} in DB", userName);
-        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-//        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo(user.getRoles());
-//        info.setStringPermissions(user.getPermissions());
+        LOG.fine("Found " + userName + " in DB");
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo(user.getRoles());
+        info.setStringPermissions(user.getPermissions());
         return info;
     }
 
     private static CredentialsMatcher theCredentials() {
-        HashedCredentialsMatcher credentials = new HashedCredentialsMatcher(Account.HASH_ALGORITHM);
-        credentials.setHashIterations(Account.HASH_ITERATIONS);
+        HashedCredentialsMatcher credentials = new HashedCredentialsMatcher(GaeUser.HASH_ALGORITHM);
+        credentials.setHashIterations(GaeUser.HASH_ITERATIONS);
         credentials.setStoredCredentialsHexEncoded(true);
         return credentials;
     }
 
-    private static boolean userIsNotQualified(Account user) {
-//        return !user.isRegistered() || user.isSuspended();
-        return true;
+    private static boolean userIsNotQualified(GaeUser user) {
+        return !user.isRegistered() || user.isSuspended();
     }
 }

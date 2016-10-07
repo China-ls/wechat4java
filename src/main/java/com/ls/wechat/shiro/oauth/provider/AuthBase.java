@@ -49,7 +49,7 @@ abstract class AuthBase {
         try {
             props.load(getClass().getResourceAsStream(resourceName));
         } catch (IOException e) {
-            LOG.severe("Can't load resource " + resourceName + ": " + e.getMessage());
+            LOG.severe("Can't load resource "+resourceName + ": " + e.getMessage());
         }
     }
 

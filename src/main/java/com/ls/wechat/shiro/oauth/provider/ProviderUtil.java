@@ -41,5 +41,5 @@ class ProviderUtil {
         } catch (MalformedURLException e) {
             return fullURL;
         }
-    }
+    }    
 }
