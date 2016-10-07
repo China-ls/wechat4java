@@ -1,6 +1,6 @@
 package weixin.popular.bean.card.create;
 
-import com.google.appengine.repackaged.com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.SerializedName;
 import weixin.popular.bean.BaseResult;
 
 /**

@@ -1,6 +1,7 @@
 package weixin.popular.bean.card.user.getcardlist;
 
-import com.google.appengine.repackaged.com.google.gson.annotations.SerializedName;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * 管理卡券－获取用户已领取卡券接口－请求参数

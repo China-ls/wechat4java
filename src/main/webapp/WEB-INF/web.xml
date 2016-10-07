@@ -1,18 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://java.sun.com/xml/ns/javaee"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-         version="2.5">
-    
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>AppStats</web-resource-name>
-            <url-pattern>/appstats/*</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>admin</role-name>
-        </auth-constraint>
-    </security-constraint>
+<?xml version="1.0" encoding="utf-8"?>
+<web-app
+        version="2.5"
+        xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>UserSecurity</web-resource-name>
@@ -23,39 +15,96 @@
         </user-data-constraint>
     </security-constraint>
 
-    <context-param>
-       <param-name>user-base-url</param-name>
-       <param-value>/user/admin</param-value>
-    </context-param>
 
     <context-param>
-        <param-name>static-base-url</param-name>
-        <!--
-        <param-value>http://static.gaeshiro.appspot.com/</param-value>
-        -->
-        <param-value></param-value>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath*:spring/application*.xml</param-value>
     </context-param>
-
+    <context-param>
+        <param-name>logbackConfigLocation</param-name>
+        <param-value>classpath:logback.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>
+            ch.qos.logback.ext.spring.web.LogbackConfigListener
+        </listener-class>
+    </listener>
+    <!--防止发生java.beans.Introspector内存泄露,应将它配置在ContextLoaderListener的前面-->
+    <listener>
+        <listener-class>
+            org.springframework.web.util.IntrospectorCleanupListener
+        </listener-class>
+    </listener>
+    <!--  实例化Spring容器  -->
+    <!--应用启动时,该监听器被执行,它会读取Spring相关配置文件,其默认会到WEB-INF中查找applicationContext.xml-->
+    <listener>
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>
+    </listener>
+    <listener>
+        <listener-class>
+            org.springframework.web.context.request.RequestContextListener
+        </listener-class>
+    </listener>
+    <!--  解决乱码问题  -->
+    <!--forceEncoding默认为false,此时效果可大致理解为request.setCharacterEncoding("UTF-8")-->
+    <!--forceEncoding=true后,可大致理解为request.setCharacterEncoding("UTF-8")和response.setCharacterEncoding("UTF-8")-->
     <filter>
-        <filter-name>guiceFilter</filter-name>
-        <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>
+            org.springframework.web.filter.CharacterEncodingFilter
+        </filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
     </filter>
-
     <filter-mapping>
-        <filter-name>guiceFilter</filter-name>
+        <filter-name>encodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
+    <!--  配置Shiro过滤器,先让Shiro过滤系统接收到的请求  -->
+    <!--这里filter-name必须对应applicationContext.xml中定义的<bean sensor_id="shiroFilter"/>-->
+    <!--  使用[/*]匹配所有请求,保证所有的可控请求都经过Shiro的过滤  -->
+    <!--通常会将此filter-mapping放置到最前面(即其他filter-mapping前面),以保证它是过滤器链中第一个起作用的-->
+    <!--<filter>-->
+        <!--<filter-name>shiroFilter</filter-name>-->
+        <!--<filter-class>-->
+            <!--org.springframework.web.filter.DelegatingFilterProxy-->
+        <!--</filter-class>-->
+        <!--<init-param>-->
+            <!--&lt;!&ndash;该值缺省为false,表示生命周期由SpringApplicationContext管理,设置为true则表示由ServletContainer管理&ndash;&gt;-->
+            <!--<param-name>targetFilterLifecycle</param-name>-->
+            <!--<param-value>true</param-value>-->
+        <!--</init-param>-->
+    <!--</filter>-->
+    <!--<filter-mapping>-->
+        <!--<filter-name>shiroFilter</filter-name>-->
+        <!--<url-pattern>/*</url-pattern>-->
+    <!--</filter-mapping>-->
 
-    <listener>
-        <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
-    </listener>
+    <!--  SpringMVC核心分发器  -->
+    <servlet>
+        <servlet-name>dispatchServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath*:spring/dispatcher-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>dispatchServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 
-    <listener>
-        <listener-class>com.ls.wechat.guice.ServeContextListener</listener-class>
-    </listener>
+
+
 
     <mime-mapping>
         <extension>manifest</extension>
@@ -65,5 +114,4 @@
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
-
 </web-app>

@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<appengine-web-app xmlns="http://appengine.google.com/ns/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="http://appengine.google.com/ns/1.0 http://googleappengine.googlecode.com/svn/branches/1.2.1/java/docs/appengine-web.xsd">
-    <application>wechat4java</application>
-    <version>1</version>
+<appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
+    <application>${appengine.app.appId}</application>
+    <version>${appengine.app.version}</version>
+    <threadsafe>true</threadsafe>
+    <use-google-connector-j>true</use-google-connector-j>
 
     <system-properties>
-        <property name="java.util.logging.config.file" value="WEB-INF/classes/logging.properties"/>
+        <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
     </system-properties>
 
-    <threadsafe>true</threadsafe>
     <sessions-enabled>true</sessions-enabled>
+
     <!--
-        Changes to a session are put into the data store asynchronously, which produces some risk
-        of losing sync, but with a big improvement in latency, which means cheaper.-->
+          Changes to a session are put into the data store asynchronously, which produces some risk
+          of losing sync, but with a big improvement in latency, which means cheaper.-->
     <async-session-persistence enabled="true" queue-name="default"/>
 
     <inbound-services>
-      <service>mail</service>
+        <service>mail</service>
     </inbound-services>
 
     <static-files>
@@ -29,5 +30,6 @@ xsi:schemaLocation="http://appengine.google.com/ns/1.0 http://googleappengine.go
     <resource-files>
         <exclude path="**"/>
     </resource-files>
+
 
 </appengine-web-app>
