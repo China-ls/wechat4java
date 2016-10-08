@@ -30,13 +30,12 @@ public abstract class XMLMessage {
 
     public String toXML() {
         StringBuilder sb = new StringBuilder();
-        sb.append("<xml>");
-        sb.append("<ToUserName><![CDATA[" + toUserName + "]]></ToUserName>");
-        sb.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
-        sb.append("<CreateTime>" + System.currentTimeMillis() / 1000 + "</CreateTime>");
-        sb.append("<MsgType><![CDATA[" + msgType + "]]></MsgType>");
-        sb.append(subXML());
-        sb.append("</xml>");
+        sb.append("<xml>").append("<ToUserName><![CDATA[").append(toUserName).append("]]></ToUserName>")
+                .append("<FromUserName><![CDATA[").append(fromUserName).append("]]></FromUserName>")
+                .append("<CreateTime>").append(System.currentTimeMillis() / 1000).append("</CreateTime>")
+                .append("<MsgType><![CDATA[").append(msgType).append("]]></MsgType>")
+                .append(subXML())
+                .append("</xml>");
         return sb.toString();
     }
 
