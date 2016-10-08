@@ -16,7 +16,9 @@
     <!-- ******************************************************************** -->
     <mvc:annotation-driven>
         <mvc:message-converters>
-            <bean class="org.springframework.http.converter.StringHttpMessageConverter" />
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter" >
+                <property name="supportedMediaTypes" value="text/plain;charset=UTF-8" />
+            </bean>
             <!--<bean class="com.ls.wechat.http.converter.Utf8StringHttpMessageConverter" />-->
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
                 <property name="objectMapper" ref="objectMapper"/>
